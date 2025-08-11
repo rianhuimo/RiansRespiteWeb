@@ -9,7 +9,7 @@ function LanternButton() {
 
     return (
         <div>
-            <button className={`button__lantern absolute bottom-80 right-115 h-[20%] w-[6%] bg-transparent`}
+            <button className={`button__lantern absolute bottom-130 right-160 h-[20%] w-[6%] bg-transparent`}
                 onClick={playSound}>
             </button>
         </div>

@@ -10,7 +10,7 @@ function CatButton() {
 
     return (
         <div>
-            <button className={`button__cat absolute bg-transparent bottom-50 right-105 h-[10%] w-[2%]`}
+            <button className={`button__cat absolute bg-transparent bottom-90 right-140 h-[11%] w-[4%]`}
                 onClick={onCatClick}>
             </button>
         </div>

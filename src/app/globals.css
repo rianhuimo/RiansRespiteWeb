@@ -53,3 +53,15 @@ body {
 .button__music__off {
   cursor: url("/cursors/music_off_cursor.png"), auto
 }
+
+.button__carpet__on {
+  cursor: url("/cursors/toby_fox.png"), auto
+}
+
+.button__carpet__off {
+  cursor: url("/cursors/temmie.png"), auto
+}
+
+.button__ralsei {
+  cursor: url("/cursors/blunt_ralsei.png"), auto
+}
