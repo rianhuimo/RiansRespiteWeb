@@ -19,8 +19,37 @@
   }
 }
 
+html {
+  height: 100%;
+}
+
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  cursor: url("/cursor.png"),auto;
+  height: 100vh;
+  /* border: 5px dashed red; */
+  box-sizing: border-box;
+}
+
+.button__cat {
+  cursor: url("/cursors/cat_cursor.png"),auto;
+}
+
+.button__lantern {
+  cursor: url("/cursors/lantern_cursor.png"), auto
+}
+
+.button__beer {
+  cursor: url("/cursors/barrel_cursor.png"), auto
+}
+
+.button__music__on {
+  cursor: url("/cursors/music_on_cursor.png"), auto
+}
+
+.button__music__off {
+  cursor: url("/cursors/music_off_cursor.png"), auto
 }
