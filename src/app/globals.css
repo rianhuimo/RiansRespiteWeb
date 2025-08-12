@@ -65,3 +65,7 @@ body {
 .button__ralsei {
   cursor: url("/cursors/blunt_ralsei.png"), auto
 }
+
+.button__door {
+  cursor: url("/cursors/door.png"), auto
+}
