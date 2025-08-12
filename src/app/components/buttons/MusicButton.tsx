@@ -27,7 +27,7 @@ function MusicButton() {
 
     return (
         <div>
-            <button className={`${music ? "button__music__on" : "button__music__off"} absolute bg-transparent bottom-60 left-95 h-[14%] aspect-square`}
+            <button className={`${music ? "button__music__on" : "button__music__off"} absolute bg-transparent bottom-[28%] left-[12%] h-[16%] aspect-square`}
                 onClick={toggleMusic}>
             </button>
         </div>

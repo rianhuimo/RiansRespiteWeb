@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 function CarpetButton() {
 
-    const [playMusic, setPlayMusic] = useState(0)
+    const [playMusic, setPlayMusic] = useState(-1)
     const [audioElement, setAudioElement] = useState<HTMLAudioElement>()
 
     useEffect(() => {
@@ -27,7 +27,7 @@ function CarpetButton() {
 
     return (
         <div>
-            <button className={`${(playMusic > 5) ? "button__ralsei" : (playMusic % 2 == 0) ? "button__carpet__on" : "button__carpet__off"} absolute bg-transparent bottom-0 left-120 h-[20%] aspect-square`}
+            <button className={`${(playMusic > 5) ? "button__ralsei" : (playMusic % 2 == 0) ? "button__carpet__on" : "button__carpet__off"} absolute bg-transparent bottom-[0%] left-[15%] h-[25%] aspect-square`}
                 onClick={toggleMusic}>
             </button>
         </div>

@@ -16,8 +16,8 @@ export default function Start() {
             <BeerButton/>
             <CarpetButton/>
             <SecretButton/>
-            <img src={"/images/credit_aakhirah.png"} className="absolute top-3 right-3 "/>
-            <video autoPlay  loop muted className="object-cover h-full m-auto w-full border-amber-50">
+            <img src={"/images/credit_aakhirah.png"} className="absolute top-[1%] right-[0.5%] "/>
+            <video autoPlay  loop muted className="object-cover h-full m-auto w-full">
                 <source src={"/videos/akhis_bar.mp4"} type="video/mp4"/>
                 Wuh oh, the video won't play!
             </video>

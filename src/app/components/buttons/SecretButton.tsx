@@ -7,7 +7,7 @@ function SecretButton() {
 
     return (
         <div>
-            <Link className={`button__door absolute bg-transparent top-90 left-120 h-[8%] aspect-square`}
+            <Link className={`button__door absolute bg-transparent top-[30%] left-[18%] h-[16%] aspect-square`}
                 href="/to-the-teahouse">
             </Link>
         </div>

@@ -9,7 +9,7 @@ function BeerButton() {
 
     return (
         <div>
-            <button className={`button__beer absolute bg-transparent bottom-50 right-180 h-[20%] w-[8%]`}
+            <button className={`button__beer absolute bg-transparent bottom-[26%] right-[38%] h-[20%] w-[8%]`}
                 onClick={playSound}>
             </button>
         </div>
