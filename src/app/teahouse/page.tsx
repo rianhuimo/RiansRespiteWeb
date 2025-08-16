@@ -1,16 +1,10 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAudioPlayer } from "react-use-audio-player";
 import ShrineGreeting from "../components/text/ShrineGreeting";
 import TestAnimation from "../components/text/TestAnimation";
-
-export interface GreetingContextType {
-    greeting: string,
-    setGreeting: (greeting: string) => void
-}
-
-export const GreetingContext = createContext<GreetingContextType | null>(null);      
+import { GreetingContext } from "./GreetingContext";
 
 function Teahouse() {
 
