@@ -12,6 +12,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@font-face {
+  font-family: "Calamity";
+  src: url("/fonts/calamity_bold.otf");
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -68,4 +73,22 @@ body {
 
 .button__door {
   cursor: url("/cursors/door.png"), auto
+}
+
+.shrine_text {
+  color: white;
+  animation-duration: 2s;
+  animation-name: glow;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #67f6a5, 0 0 20px #67f6a5, 0 0 30px #67f6a5, 0 0 40px #59d08d, 0 0 50px #bbffd8
+  }
+  
+  to {
+    text-shadow: 0 0 17px #67f6a5, 0 0 27px #67f6a5, 0 0 37px #67f6a5, 0 0 47px #59d08d, 0 0 57px #bbffd8
+  }
 }

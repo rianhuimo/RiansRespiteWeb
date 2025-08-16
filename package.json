@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-spring/web": "^10.0.1",
     "@types/howler": "^2.2.12",
     "next": "15.4.6",
     "react": "19.1.0",
