@@ -1,6 +1,7 @@
+"use-client"
 import React, { useContext, useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web'
-import { GreetingContext, GreetingContextType } from '@/app/teahouse';
+import { GreetingContext, GreetingContextType } from '@/app/teahouse/page';
 
 interface ShrineGreetingProps {
     className: string,
