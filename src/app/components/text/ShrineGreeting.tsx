@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { animated, useSpring } from '@react-spring/web'
-import { GreetingContext, GreetingContextType } from '@/app/teahouse/page';
+import { GreetingContext, GreetingContextType } from '@/app/teahouse';
 
 interface ShrineGreetingProps {
     className: string,
