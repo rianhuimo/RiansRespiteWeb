@@ -17,6 +17,11 @@
   src: url("/fonts/calamity_bold.otf");
 }
 
+@font-face {
+  font-family: Zonai;
+  src: url("/fonts/zonai.ttf");
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -85,10 +90,10 @@ body {
 
 @keyframes glow {
   from {
-    text-shadow: 0 0 10px #67f6a5, 0 0 20px #67f6a5, 0 0 30px #67f6a5, 0 0 40px #59d08d, 0 0 50px #bbffd8
+    text-shadow: 0 0 10px #6cbc8fc4, 0 0 20px #6cbc8fc4, 0 0 30px #67f6a5c4, 0 0 40px #59d08d, 0 0 50px #bbffd8
   }
   
   to {
-    text-shadow: 0 0 17px #67f6a5, 0 0 27px #67f6a5, 0 0 37px #67f6a5, 0 0 47px #59d08d, 0 0 57px #bbffd8
+    text-shadow: 0 0 17px #67f6a5c4, 0 0 27px #67f6a5c4, 0 0 37px #67f6a5c4, 0 0 47px #59d08d, 0 0 57px #bbffd8
   }
 }

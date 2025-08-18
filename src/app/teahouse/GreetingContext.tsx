@@ -1,10 +1,13 @@
 'use client';
 import { createContext } from "react";
 
-
-export interface GreetingContextType {
+export interface GreetingProps {
     greeting: string;
-    setGreeting: (greeting: string) => void;
+    duration: number;
 }
 
-export const GreetingContext = createContext<GreetingContextType | null>(null);
+export interface Greetings {
+    greetings: GreetingProps[]
+}
+
+export const GreetingContext = createContext<Greetings | null>(null);

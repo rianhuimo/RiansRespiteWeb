@@ -3,34 +3,45 @@
 import { useContext, useEffect, useState } from "react";
 import { useAudioPlayer } from "react-use-audio-player";
 import ShrineGreeting from "../components/text/ShrineGreeting";
-import TestAnimation from "../components/text/TestAnimation";
-import { GreetingContext } from "./GreetingContext";
+import { GreetingContext, Greetings, GreetingProps } from "./GreetingContext";
 
 function Teahouse() {
 
-    const [greeting,setGreeting] = useState("")
+    const [greetings, setGreetings] = useState<Greetings>({greetings: []})
 
     const { togglePlayPause, isPlaying } = useAudioPlayer("/audio/zonai_shrine.wav", {
         autoplay: false,
         loop: false,
     })
 
-    function startGreetingSequence() {
-        setGreeting("Welcome to my teahouse lol")
-        setTimeout(() => {
-            setGreeting("I have teas of every kind")
-        }, 7500);
-        setTimeout(() => {
-            setGreeting("Along with an assortment of milks. Except dairy milk.")
-        }, 15000);
-        setTimeout(() => {
-            setGreeting("I am lactose intolerant...")
-        }, 23500);
+    async function startGreetingSequence() {
+        // Pass all the greetings to the state. 
+        // ShrineGreeting.tsx component receives this and makes fade-in/fade-out animations
+        setGreetings({
+            greetings: [
+                {
+                    greeting: "Welcome to my teahouse",
+                    duration: 7800
+                },
+                {
+                    greeting: "I have teas of every kind",
+                    duration: 7700
+                },
+                {
+                    greeting: "Along with an assortment of milks. Except dairy milk.",
+                    duration: 8000
+                },
+                {
+                    greeting: "I am lactose intolerant...",
+                    duration: 10000
+                },
+            ]
+        })
     }
 
     // runs once to start the music and animation
     useEffect(() => {
-        console.log("message before timeout")
+        // console.log("message before timeout")
         let timer = setTimeout(
             () => {
                 console.log("now playing audio")
@@ -46,7 +57,7 @@ function Teahouse() {
     }, [])
 
     return (
-        <GreetingContext.Provider value={{greeting,setGreeting}}>
+        <GreetingContext.Provider value={greetings}>
             <div className=" bg-black h-full justify-center w-full">
                 <img src={"/images/rians_teahouse.png"} className="absolute top-3 right-3 " />
                 <video autoPlay loop muted
@@ -55,7 +66,6 @@ function Teahouse() {
                     Wuh oh, the video won't play!
                 </video>
                 <ShrineGreeting className="absolute top-[30%] w-full text-center" />
-                <TestAnimation/>
             </div>
         </GreetingContext.Provider>
     );
