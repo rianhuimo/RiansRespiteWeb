@@ -12,6 +12,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-dune: #413434;
+  --color-dusty-rose: #E5BEB5;
+  --color-sand: #E2D5A7;
+  --color-linen: #EEE6CA;
+}
+
 @font-face {
   font-family: "Calamity";
   src: url("/fonts/calamity_bold.otf");
