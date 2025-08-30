@@ -92,7 +92,7 @@ function ShrineGreeting({ className }: ShrineGreetingProps) {
             style={{
                 ...springs,
             }}
-            className={className + " " + "font-[calamity] text-3xl shrine_text w-full m-auto"}>
+            className={className + " " + "font-[calamity] font-bold text-3xl shrine_text w-full m-auto"}>
             <div className='m-auto w-xl'>
                 {greeting}
             </div>

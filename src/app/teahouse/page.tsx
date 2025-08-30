@@ -14,6 +14,13 @@ function Teahouse() {
         loop: false,
     })
 
+    useEffect(() => {
+        console.log("isPlaying changed:", isPlaying)
+        if (isPlaying) {
+            startGreetingSequence()
+        }
+    }, [isPlaying])
+
     async function startGreetingSequence() {
         // Pass all the greetings to the state. 
         // ShrineGreeting.tsx component receives this and makes fade-in/fade-out animations
@@ -46,7 +53,7 @@ function Teahouse() {
             () => {
                 console.log("now playing audio")
                 togglePlayPause()
-                startGreetingSequence()
+                // startGreetingSequence()
             },
             2 * 1000);
         return () => {
