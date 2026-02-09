@@ -164,3 +164,147 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
+  verify-signatures:
+    name: Verify Artifact Signatures
+    needs: sign-artifacts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: read
+      id-token: write
+      attestations: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download signed artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: signed-build-artifacts
+          path: ./signed-artifacts
+      
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.4.0
+        with:
+          cosign-release: 'v2.2.3'
+      
+      - name: Verify checksum
+        run: |
+          cd signed-artifacts
+          echo "Verifying SHA256 checksum..."
+          sha256sum -c build-artifacts.tar.gz.sha256
+          if [ $? -eq 0 ]; then
+            echo "✓ Checksum verification passed"
+          else
+            echo "✗ Checksum verification failed"
+            exit 1
+          fi
+      
+      - name: Verify Sigstore signature
+        run: |
+          cd signed-artifacts
+          echo "Verifying Sigstore signature..."
+          
+          # Verify the signature using Cosign
+          # Sigstore uses keyless signing with OIDC, so we verify against the public Rekor instance
+          cosign verify-blob \
+            --certificate-identity-regexp="https://github.com/${{ github.repository }}/*" \
+            --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+            --signature build-artifacts.tar.gz.sig \
+            --bundle build-artifacts.tar.gz.sigstore.json \
+            build-artifacts.tar.gz
+          
+          if [ $? -eq 0 ]; then
+            echo "✓ Signature verification passed"
+          else
+            echo "✗ Signature verification failed"
+            exit 1
+          fi
+      
+      - name: Verify GitHub attestation
+        run: |
+          cd signed-artifacts
+          echo "Verifying GitHub attestation..."
+          gh attestation verify build-artifacts.tar.gz \
+            --owner ${{ github.repository_owner }}
+          
+          if [ $? -eq 0 ]; then
+            echo "✓ Attestation verification passed"
+          else
+            echo "✗ Attestation verification failed"
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      
+      - name: Create verification report
+        run: |
+          cat > verification-report.txt << EOF
+          ═══════════════════════════════════════════════
+          ARTIFACT SIGNATURE VERIFICATION REPORT
+          ═══════════════════════════════════════════════
+          
+          Verification Date: $(date -u)
+          Repository: ${{ github.repository }}
+          Commit SHA: ${{ github.sha }}
+          Ref: ${{ github.ref }}
+          
+          ✓ All verification checks passed:
+            - SHA256 checksum validated
+            - Sigstore signature verified
+            - GitHub attestation verified
+          
+          Artifact is ready for deployment.
+          ═══════════════════════════════════════════════
+          EOF
+          cat verification-report.txt
+      
+      - name: Upload verification report
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-report
+          path: verification-report.txt
+          retention-days: 90
+
+  deploy:
+    name: Deploy to Production
+    needs: verify-signatures
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    
+    permissions:
+      contents: read
+      deployments: write
+    
+    steps:
+      - name: Download verified artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: signed-build-artifacts
+          path: ./deploy
+      
+      - name: Download verification report
+        uses: actions/download-artifact@v4
+        with:
+          name: verification-report
+          path: ./
+      
+      - name: Display verification report
+        run: cat verification-report.txt
+      
+      - name: Extract verified artifacts
+        run: |
+          cd deploy
+          tar -xzf build-artifacts.tar.gz
+          rm build-artifacts.tar.gz
+      
+      - name: Deploy to environment
+        run: |
+          echo "Deploying verified and signed artifacts..."
+          echo "All signatures have been verified before deployment."
+          # Add your deployment commands here (e.g., Vercel, Netlify, AWS, etc.)
+          # Example: vercel deploy --prod
+          echo "✓ Deployment complete"
