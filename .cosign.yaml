@@ -1,0 +1,33 @@
+# Cosign Configuration for Artifact Signing
+# This configuration is used by Sigstore Cosign for signing artifacts during the build process
+
+# Signature algorithm
+sigAlgorithm: ecdsa-p256-sha256
+
+# Use keyless signing with OIDC (no private keys to manage)
+keyless: true
+
+# OIDC issuer for GitHub Actions
+oidcIssuer: https://token.actions.githubusercontent.com
+
+# Rekor transparency log URL (public ledger of signatures)
+rekorURL: https://rekor.sigstore.dev
+
+# Fulcio certificate authority (issues short-lived certificates)
+fulcioURL: https://fulcio.sigstore.dev
+
+# Upload signatures to Rekor transparency log
+uploadTLog: true
+
+# Artifacts to sign (configurable patterns)
+artifacts:
+  - "*.tar.gz"
+  - "*.zip"
+  - "build-artifacts.*"
+
+# Additional metadata to include in signatures
+annotations:
+  - name: "build.sourceRepository"
+    value: "https://github.com/rianhuimo/RiansRespiteWeb"
+  - name: "build.system"
+    value: "GitHub Actions"
