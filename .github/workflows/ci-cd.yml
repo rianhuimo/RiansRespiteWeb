@@ -84,7 +84,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: nextjs-build
           path: ./artifacts
@@ -178,7 +178,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Download signed artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: signed-build-artifacts
           path: ./signed-artifacts
@@ -277,7 +277,7 @@ jobs:
     
     steps:
       - name: Download verification report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: verification-report
           path: ./
