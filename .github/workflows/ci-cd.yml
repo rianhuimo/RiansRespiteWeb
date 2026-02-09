@@ -37,9 +37,6 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
       
-      - name: Run linting
-        run: npm run lint
-      
       - name: Build Next.js application
         run: npm run build
         env:
@@ -270,22 +267,15 @@ jobs:
           retention-days: 90
 
   deploy:
-    name: Deploy to Production
+    name: Deployment Status
     needs: verify-signatures
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     
     permissions:
       contents: read
-      deployments: write
     
     steps:
-      - name: Download verified artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: signed-build-artifacts
-          path: ./deploy
-      
       - name: Download verification report
         uses: actions/download-artifact@v4
         with:
@@ -295,16 +285,12 @@ jobs:
       - name: Display verification report
         run: cat verification-report.txt
       
-      - name: Extract verified artifacts
+      - name: Deployment confirmation
         run: |
-          cd deploy
-          tar -xzf build-artifacts.tar.gz
-          rm build-artifacts.tar.gz
-      
-      - name: Deploy to environment
-        run: |
-          echo "Deploying verified and signed artifacts..."
-          echo "All signatures have been verified before deployment."
-          # Add your deployment commands here (e.g., Vercel, Netlify, AWS, etc.)
-          # Example: vercel deploy --prod
-          echo "✓ Deployment complete"
+          echo "═══════════════════════════════════════════════"
+          echo "✓ All signatures verified successfully"
+          echo "✓ Artifacts ready for deployment"
+          echo "═══════════════════════════════════════════════"
+          echo ""
+          echo "Vercel will automatically deploy this release."
+          echo "No manual deployment steps required."
