@@ -46,7 +46,7 @@ jobs:
           NODE_ENV: production
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: nextjs-build
           path: |
@@ -66,7 +66,7 @@ jobs:
       
       - name: Upload build provenance
         if: github.event_name == 'release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-provenance
           path: build-info.txt
@@ -111,7 +111,7 @@ jobs:
           upload-signing-artifacts: true
       
       - name: Upload signed artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: signed-build-artifacts
           path: |
@@ -263,7 +263,7 @@ jobs:
           cat verification-report.txt
       
       - name: Upload verification report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: verification-report
           path: verification-report.txt

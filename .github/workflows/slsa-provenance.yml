@@ -46,7 +46,7 @@ jobs:
           echo "hashes=$(sha256sum riansrespiteweb-${{ github.ref_name }}.tar.gz | base64 -w0)" >> "$GITHUB_OUTPUT"
       
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-artifacts
           path: |
