@@ -184,7 +184,7 @@ jobs:
           path: ./signed-artifacts
       
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.4.0
+        uses: sigstore/cosign-installer@v4.0.0
         with:
           cosign-release: 'v2.2.3'
       
