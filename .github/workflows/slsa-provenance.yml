@@ -1,0 +1,91 @@
+name: SLSA Provenance
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Build with SLSA Provenance
+    runs-on: ubuntu-latest
+    outputs:
+      hashes: ${{ steps.hash.outputs.hashes }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Create release artifacts
+        run: |
+          tar -czf riansrespiteweb-${{ github.ref_name }}.tar.gz .next/ public/
+          sha256sum riansrespiteweb-${{ github.ref_name }}.tar.gz > checksums.txt
+      
+      - name: Generate artifact hash
+        id: hash
+        run: |
+          echo "hashes=$(sha256sum riansrespiteweb-${{ github.ref_name }}.tar.gz | base64 -w0)" >> "$GITHUB_OUTPUT"
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            riansrespiteweb-${{ github.ref_name }}.tar.gz
+            checksums.txt
+          retention-days: 30
+  
+  provenance:
+    name: Generate SLSA Provenance
+    needs: [build]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+      attestations: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.hashes }}"
+      upload-assets: true
+
+  verify:
+    name: Verify SLSA Provenance
+    needs: [build, provenance]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+      
+      - name: Install SLSA verifier
+        run: |
+          curl -Lo slsa-verifier https://github.com/slsa-framework/slsa-verifier/releases/download/v2.4.1/slsa-verifier-linux-amd64
+          chmod +x slsa-verifier
+      
+      - name: Verify provenance
+        run: |
+          ./slsa-verifier verify-artifact riansrespiteweb-${{ github.ref_name }}.tar.gz \
+            --provenance-path riansrespiteweb-${{ github.ref_name }}.tar.gz.intoto.jsonl \
+            --source-uri github.com/${{ github.repository }} \
+            --source-tag ${{ github.ref_name }}

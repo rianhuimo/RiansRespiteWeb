@@ -1,0 +1,179 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  release:
+    types: [created]
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+        python-version: ['3.11']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+      
+      - name: Install Node.js dependencies
+        run: npm ci
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f python-backend/pyproject.toml ]; then pip install -e python-backend/; fi
+      
+      - name: Run linting
+        run: npm run lint
+      
+      - name: Build Next.js application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: |
+            .next/
+            out/
+            public/
+          retention-days: 7
+      
+      - name: Generate build provenance
+        if: github.event_name == 'release'
+        run: |
+          echo "Build information:" > build-info.txt
+          echo "Commit: ${{ github.sha }}" >> build-info.txt
+          echo "Ref: ${{ github.ref }}" >> build-info.txt
+          echo "Timestamp: $(date -u)" >> build-info.txt
+          echo "Runner: ${{ runner.os }}" >> build-info.txt
+      
+      - name: Upload build provenance
+        if: github.event_name == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-provenance
+          path: build-info.txt
+
+  sign-artifacts:
+    name: Sign Artifacts
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: nextjs-build
+          path: ./artifacts
+      
+      - name: Create artifact archive
+        run: |
+          cd artifacts
+          tar -czf ../build-artifacts.tar.gz .
+          cd ..
+          sha256sum build-artifacts.tar.gz > build-artifacts.tar.gz.sha256
+      
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: 'build-artifacts.tar.gz'
+      
+      - name: Sign artifacts with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v2.1.1
+        with:
+          inputs: build-artifacts.tar.gz
+          upload-signing-artifacts: true
+      
+      - name: Upload signed artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-build-artifacts
+          path: |
+            build-artifacts.tar.gz
+            build-artifacts.tar.gz.sha256
+            build-artifacts.tar.gz.sigstore.json
+            build-artifacts.tar.gz.sig
+          retention-days: 30
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          deny-licenses: GPL-3.0, AGPL-3.0
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      security-events: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
