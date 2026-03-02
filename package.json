@@ -16,7 +16,7 @@
     "@mui/material-nextjs": "^7.3.0",
     "@react-spring/web": "^10.0.1",
     "@types/howler": "^2.2.12",
-    "axios": "^1.11.0",
+    "axios": "^1.13.6",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
